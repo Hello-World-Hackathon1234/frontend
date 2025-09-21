@@ -17,7 +17,8 @@ import { storage } from '../../utils/AsyncStorage';
 import { generateMealPlan } from '../../utils/MealPlanner';
 import { goalOptions, dietaryOptions, allergenOptions } from '../../data/mockData';
 import { useOnboarding } from '../../context/OnboardingContext';
-
+import {computeNutritionTargets} from '../../utils/MealPlanner';
+import { sendUserMacros } from '../../../index';
 
 export default function PlanReadyScreen({ onComplete }) {
   const { onboardingData } = useOnboarding();
@@ -51,6 +52,9 @@ export default function PlanReadyScreen({ onComplete }) {
         // Save profile and mark as onboarded
         await storage.saveUserProfile(userProfile);
         await storage.saveOnboardingData(onboardingData);
+        const macros = computeNutritionTargets(onboardingData);
+        await sendUserMacros({cals:macros.targetCalories, protein:macros.targetProtein, carbs:macros.targetCarbs, fat:macros.targetFat});
+
         await storage.setOnboarded(true);
 
         // Generate meal plan
