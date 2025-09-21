@@ -7,7 +7,8 @@ export  const generateMealPlan = async (userProfile = {}, excludedItems = []) =>
   const { goal, allergies = [], dietaryPreferences = [] } = userProfile;
 
   // Get target nutrition from profile goals
-  const targets = mockUserProfiles[goal] || mockUserProfiles.maintain;
+  const onboardingData = (await storage.getOnboardingData()) || {};
+  const targets = computeNutritionTargets(onboardingData);
 
   // Safely fetch recommendations; default to empty object on error
   const recomendations = await storage.getRecommendations().catch((e) => {
@@ -70,7 +71,7 @@ const getActivityMultiplier = (activityLevelId) => {
   }
 };
 
-const computeNutritionTargets = (profile) => {
+export const computeNutritionTargets = (profile) => {
   const {
     sex,
     age,

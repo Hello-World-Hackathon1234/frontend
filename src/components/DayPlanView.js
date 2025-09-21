@@ -63,7 +63,7 @@ export default function DayPlanView({ plan, onGenerate, isCurrentDay, getRelativ
           return (
             <View key={m.key} style={styles.nutrientCard}>
               <Text style={styles.nutrientCategory}>{m.label}</Text>
-              <Text style={styles.nutrientValue}>{displayValue}</Text>
+              <Text style={styles.nutrientValue}>{Math.round(displayValue)}</Text>
               {displayTarget ? <Text style={styles.nutrientGoal}>{displayTarget}</Text> : null}
             </View>
           );

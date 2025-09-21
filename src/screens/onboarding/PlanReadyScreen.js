@@ -50,6 +50,7 @@ export default function PlanReadyScreen({ onComplete }) {
 
         // Save profile and mark as onboarded
         await storage.saveUserProfile(userProfile);
+        await storage.saveOnboardingData(onboardingData);
         await storage.setOnboarded(true);
 
         // Generate meal plan
@@ -76,7 +77,7 @@ export default function PlanReadyScreen({ onComplete }) {
     };
 
     generatePlan();
-  }, []);
+  }, [goal, dietaryPreferences, allergies, sex, age, height, weight, activityLevel, unitSystem, onboardingData]);
 
   const handleContinue = () => {
     Animated.timing(slideX, {

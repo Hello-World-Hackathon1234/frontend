@@ -19,7 +19,8 @@ import { storage } from '../../utils/AsyncStorage';
 import { generateMealPlan, generateAlternativeMeal } from '../../utils/MealPlanner';
 import { diningCourts } from '../../data/mockData';
 import DayPlanView from '../../components/DayPlanView';
-
+import { computeNutritionTargets } from '../../utils/MealPlanner';
+import { sendUserMacros} from '../../../index'
 export default function TodaysPlanScreen() {
   const [userProfile, setUserProfile] = useState(null);
   const [plansByDate, setPlansByDate] = useState({});
@@ -48,6 +49,10 @@ export default function TodaysPlanScreen() {
 
   const loadUserDataAndGeneratePlan = async (dateObj) => {
     try {
+      const onboardingData = (await storage.getOnboardingData()) || {};
+      const macros = computeNutritionTargets(onboardingData);
+      await sendUserMacros({cals:macros.targetCalories, protein:macros.targetProtein, carbs:macros.targetCarbs, fat:macros.targetFat});
+
       const profile = await storage.getUserProfile();
       if (profile) {
         setUserProfile(profile);

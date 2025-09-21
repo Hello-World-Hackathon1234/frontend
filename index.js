@@ -3,11 +3,28 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storage } from './src/utils/AsyncStorage';
-
+import { computeNutritionTargets } from './src/utils/MealPlanner';
 import App from './App';
+
+const API_BASE = 'https://backend-production-28e8.up.railway.app'; // <- backend base URL
 
 // new: wrapper that ensures /register is called when onboarding is not complete,
 // and that computes + sends macros to /update_user_macs after onboarding completes.
+export async function sendUserMacros(macros) {
+		try {
+            console.log("Sending macros", macros);
+			const res = await fetch(`${API_BASE}/update_user_macs`, {
+				method: 'POST',
+				credentials: 'include',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(macros),
+			});
+			console.log(res, await res.json());
+		} catch (err) {
+			console.warn('failed to send macros', err);
+		}
+	}
+
 function RootWrapper() {
 	const [ready, setReady] = useState(false);
 	const pollRef = useRef(null);
@@ -35,6 +52,7 @@ function RootWrapper() {
 	// simple macro calculator from onboarding data
 	function calculateMacros(onboard) {
 		// expected keys (try to be flexible): weightKg, heightCm, age, sex, activity, goal, calories
+		console.log("ONBOARD", onboard);
 		const weight = Number(onboard?.weightKg ?? onboard?.weight ?? 70);
 		const height = Number(onboard?.heightCm ?? onboard?.height ?? 175);
 		const age = Number(onboard?.age ?? 30);
@@ -81,13 +99,15 @@ function RootWrapper() {
 
 	async function sendUserMacros(macros) {
 		try {
-            console.log("Sending macros", macros);
-			await fetch(`${API_BASE}/update_user_macs`, {
+            console.log("Sending macros");
+			const res = await fetch(`${API_BASE}/update_user_macs`, {
 				method: 'POST',
 				credentials: 'include',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(macros),
 			});
+			console.log(res);
+			console.log(await res.json());
 		} catch (err) {
 			console.warn('failed to send macros', err);
 		}
@@ -160,8 +180,8 @@ function RootWrapper() {
 			const onboarded = await storage.getOnboardedStatus();
 			if (!onboarded) return;
 			const onboardingData = (await storage.getOnboardingData()) || {};
-			const macros = calculateMacros(onboardingData);
-			// await sendUserMacros(macros);
+			const macros = computeNutritionTargets(onboardingData);
+			await sendUserMacros({cals:macros.targetCalories, protein:macros.targetProtein, carbs:macros.targetCarbs, fat:macros.targetFat});
             const hall = 'Earhart';
 			await fetchAndStoreAllRecommendations(hall, 6);
 		} catch (e) {
@@ -179,8 +199,8 @@ function RootWrapper() {
 					clearInterval(pollRef.current);
 					pollRef.current = null;
 					const onboardingData = (await storage.getOnboardingData()) || {};
-					const macros = calculateMacros(onboardingData);
-					await sendUserMacros(macros);
+					const macros = computeNutritionTargets(onboardingData);
+					await sendUserMacros({cals:macros.targetCalories, protein:macros.targetProtein, carbs:macros.targetCarbs, fat:macros.targetFat});
 
 					// fetch real meal recommendations after onboarding completes
 					const hall = onboardingData?.hall ?? 'Earhart';

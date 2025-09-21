@@ -70,29 +70,29 @@ export const activityLevels = [
 export const mockMenuItems = [
 ];
 
-export const mockUserProfiles = {
-  loseWeight: {
-    goal: 'Lose Weight',
-    targetCalories: 1800,
-    targetProtein: 135,
-    targetCarbs: 180,
-    targetFat: 60,
-  },
-  maintain: {
-    goal: 'Maintain',
-    targetCalories: 2200,
-    targetProtein: 165,
-    targetCarbs: 275,
-    targetFat: 73,
-  },
-  gainMuscle: {
-    goal: 'Gain Muscle',
-    targetCalories: 2600,
-    targetProtein: 195,
-    targetCarbs: 325,
-    targetFat: 87,
-  },
-};
+// export const mockUserProfiles = {
+//   loseWeight: {
+//     goal: 'Lose Weight',
+//     targetCalories: 1800,
+//     targetProtein: 135,
+//     targetCarbs: 180,
+//     targetFat: 60,
+//   },
+//   maintain: {
+//     goal: 'Maintain',
+//     targetCalories: 2200,
+//     targetProtein: 165,
+//     targetCarbs: 275,
+//     targetFat: 73,
+//   },
+//   gainMuscle: {
+//     goal: 'Gain Muscle',
+//     targetCalories: 2600,
+//     targetProtein: 195,
+//     targetCarbs: 325,
+//     targetFat: 87,
+//   },
+// };
 
 export const dietaryOptions = [
   { id: 'vegetarian', label: 'Vegetarian', icon: '🥬' },
